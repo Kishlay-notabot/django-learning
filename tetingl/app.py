@@ -56,6 +56,53 @@ def send_message():
 
     return redirect(url_for('chat'))
 
+@app.route('/images', methods=['GET'])
+def images():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
+    images = Image.query.order_by(Image.timestamp.desc()).all()
+    return render_template('images.html', images=images, user=session['user'])
+
+
+@app.route('/upload_image', methods=['POST'])
+def upload_image():
+    if 'user' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image provided'}), 400
+
+    file = request.files['image']
+    if file.filename == '':
+        return jsonify({'error': 'No image selected'}), 400
+
+    if file:
+        # Read the file and encode it
+        image_data = file.read()
+        encoded_image = base64.b64encode(image_data).decode('utf-8')
+        
+        # Create a new Image instance
+        new_image = Image(content=encoded_image, content_type=file.content_type)
+        db.session.add(new_image)
+        db.session.commit()
+
+
+@app.route('/get_images', methods=['GET'])
+def get_images():
+    if 'user' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+
+    images = Image.query.order_by(Image.timestamp.desc()).all()
+    image_list = [{
+        'id': image.id,
+        'content': image.content,
+        'content_type': image.content_type,
+        'timestamp': image.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+    } for image in images]
+
+    return jsonify(image_list)
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
