@@ -88,7 +88,7 @@ def upload_image():
         new_image = Image(content=encoded_image, content_type=file.content_type)
         db.session.add(new_image)
         db.session.commit()
-
+        return jsonify({'success': True, 'message': 'Image uploaded successfully'}), 200
 
 @app.route('/get_images', methods=['GET'])
 def get_images():
