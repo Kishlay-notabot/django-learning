@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime
 import pytz
+import base64
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'kyubechal'  # Change this to a random secret key
@@ -23,6 +24,7 @@ class Image(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     content_type = db.Column(db.String(10), nullable=False)
+    timestamp = db.Column(db.DateTime, default=lambda: datetime.now(ist))
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
