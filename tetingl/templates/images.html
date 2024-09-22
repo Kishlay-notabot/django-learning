@@ -17,6 +17,9 @@
             border: 1px solid #ccc;
             padding: 10px;
             margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
         .image-item {
             margin-bottom: 20px;
@@ -52,7 +55,8 @@
                 .then(response => response.json())
                 .then(images => {
                     imageContainer.innerHTML = '';
-                    images.forEach(image => {
+                    // Load images in the order they were uploaded (oldest first, newest last)
+                    images.reverse().forEach(image => {
                         const imageElement = document.createElement('div');
                         imageElement.className = 'image-item';
                         imageElement.innerHTML = `
@@ -61,6 +65,8 @@
                         `;
                         imageContainer.appendChild(imageElement);
                     });
+                    // Scroll to the bottom of the container
+                    imageContainer.scrollTop = imageContainer.scrollHeight;
                 })
                 .catch(error => console.error('Error loading images:', error));
         }
@@ -80,7 +86,8 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    loadImages();  // Reload images after successful upload
+                    loadImages();
+                    window.location.reload();  // Reload images after successful upload
                     uploadForm.reset();
                 } else {
                     alert('Upload failed: ' + data.error);
