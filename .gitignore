@@ -2,3 +2,5 @@
 /mysite/polls/__pycache__
 /mysite/mysite/__pycache__
 /tetingl/instance
+/tetingl/migrations
+/tetingl/__pycache__

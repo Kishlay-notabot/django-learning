@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from datetime import datetime
 import pytz
 
@@ -9,7 +10,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
-
+migrate = Migrate(app, db)
 # Define the IST time zone
 ist = pytz.timezone('Asia/Kolkata')
 
@@ -18,7 +19,10 @@ class Message(db.Model):
     user = db.Column(db.String(10), nullable=False)
     content = db.Column(db.String(200), nullable=False)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(ist))
-
+class Image(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    content_type = db.Column(db.String(10), nullable=False)
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
