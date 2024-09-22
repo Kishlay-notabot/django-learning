@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+        }
+        input[type="text"] {
+            flex-grow: 1;
+            padding: 5px;
+        }
+        input[type="submit"] {
+            padding: 5px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-messages">
+        {% for message in messages %}
+            <p>{{ message.user }}: {{ message.content }} {{ message.timestamp.strftime('%H:%M') }}</p>
+        {% endfor %}
+    </div>
+    <form action="{{ url_for('send_message') }}" method="POST">
+        <input type="text" name="message" placeholder="Type here" required>
+        <input type="submit" value="Send">
+    </form>
+
+    <script>
+        // Scroll to the bottom of the chat when the page loads
+        window.onload = function() {
+            var chatMessages = document.getElementById('chat-messages');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+    </script>
+</body>
+</html>
