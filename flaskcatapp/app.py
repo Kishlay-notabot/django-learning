@@ -1,17 +1,23 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import os
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime
 import pytz
-import base64
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'kyubechal'  # Change this to a random secret key
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chat.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = 'uploads'  # New configuration for upload folder
+
+# Ensure the upload folder exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
 # Define the IST time zone
 ist = pytz.timezone('Asia/Kolkata')
 
@@ -20,11 +26,13 @@ class Message(db.Model):
     user = db.Column(db.String(10), nullable=False)
     content = db.Column(db.String(200), nullable=False)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(ist))
+
 class Image(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    content_type = db.Column(db.String(10), nullable=False)
+    filename = db.Column(db.String(100), nullable=False)
+    content_type = db.Column(db.String(50), nullable=False)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(ist))
+
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -66,7 +74,6 @@ def images():
     images = Image.query.order_by(Image.timestamp.desc()).all()
     return render_template('images.html', images=images, user=session['user'])
 
-
 @app.route('/upload_image', methods=['POST'])
 def upload_image():
     if 'user' not in session:
@@ -80,12 +87,11 @@ def upload_image():
         return jsonify({'error': 'No image selected'}), 400
 
     if file:
-        # Read the file and encode it
-        image_data = file.read()
-        encoded_image = base64.b64encode(image_data).decode('utf-8')
+        filename = secure_filename(file.filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
         
-        # Create a new Image instance
-        new_image = Image(content=encoded_image, content_type=file.content_type)
+        new_image = Image(filename=filename, content_type=file.content_type)
         db.session.add(new_image)
         db.session.commit()
         return jsonify({'success': True, 'message': 'Image uploaded successfully'}), 200
@@ -98,12 +104,16 @@ def get_images():
     images = Image.query.order_by(Image.timestamp.desc()).all()
     image_list = [{
         'id': image.id,
-        'content': image.content,
+        'filename': image.filename,
         'content_type': image.content_type,
         'timestamp': image.timestamp.strftime('%Y-%m-%d %H:%M:%S')
     } for image in images]
 
     return jsonify(image_list)
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_folder'], filename)
 
 if __name__ == '__main__':
     with app.app_context():
