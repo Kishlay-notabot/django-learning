@@ -21,3 +21,6 @@ shows the sql commands which will we run in a particular migration script [here 
 
 * `python manage.py migrate`  
 apply migration  
+
+^ `python manage.py createsuperuser`  
+create an admin user  
