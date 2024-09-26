@@ -18,3 +18,6 @@ save migrations for the polls app, [run after including polls in the INSTALLED_A
 
 * `python manage.py sqlmigrate polls 0001`  
 shows the sql commands which will we run in a particular migration script [here it is 0001_initial.py]
+
+* `python manage.py migrate`  
+apply migration  
