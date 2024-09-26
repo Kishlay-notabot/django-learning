@@ -8,3 +8,4 @@
 /flaskcatapp/instance
 /flaskcatapp/migrations
 /mysite/polls/migrations
+/mysite/db.sqlite3
