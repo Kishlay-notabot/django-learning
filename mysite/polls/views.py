@@ -21,7 +21,7 @@ class DetailView(generic.DetailView):
 
 class ResultsView(generic.DetailView):
     model = Ques
-    template_name = "polls.results.html"
+    template_name = "polls/results.html"
 
 
 def vote(request, question_id):
