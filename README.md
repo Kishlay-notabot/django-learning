@@ -10,6 +10,9 @@ starts the project and initial files
 * `python manage.py startapp polls`  
 creates an app named polls  
 
+* `python manage.py shell`  
+django interactive shell
+
 * `python manage.py migrate`  
     initial db file
 
