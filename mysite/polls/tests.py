@@ -5,9 +5,10 @@ from django.utils import timezone
 
 from .models import Ques, Choice
 
-def create_question_with_choice(question_t, question_c):
+def create_question_with_choice(question_t): # add ", choice_text"
     time = timezone.now()
-    Ques.objects.create(question_text=question_t, pub_date=time,choice_text=question_c)
+    question = Ques.objects.create(question_text=question_t, pub_date=time)
+    # Choice.objects.create(question=question, choice_text=choice_text)
 
   
 class QuestionModelTests(TestCase):
@@ -86,7 +87,7 @@ class QuestionDetailViewTests(TestCase):
 
 
 class TestForEmptyQues(TestCase):
-    new_question = create_question_with_choice(question_t="TestQ", question_c="TestChoice")
-    response = self.client.get(reverse("polls:index"))
-    self.assertContains(response, "No polls are available.")
-    self.assertQuerySetEqual(response.context["latest_question_list"], [])
+    def test_empty_question(self):
+            new_question = create_question_with_choice(question_t="TestQ")
+            response = self.client.get(reverse("polls:index"))
+            self.assertContains(response, "No polls are available.")
