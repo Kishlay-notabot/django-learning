@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.test import TestCase
 from django.utils import timezone
 
-from .models import Ques
+from .models import Ques, Choice
 def create_question_without_choice(question_t):
     time = timezone.now()
     Ques.objects.create(question_text=question_t, pub_date=time)
@@ -20,7 +20,9 @@ class QuestionModelTests(TestCase):
 
 def create_question(question_text, days):
     time = timezone.now() + datetime.timedelta(days=days)
-    return Ques.objects.create(question_text=question_text,pub_date=time)
+    question = Ques.objects.create(question_text=question_text, pub_date=time)
+    Choice.objects.create(question=question, choice_text="Choice for " + question_text)
+    return question
 
 class QuestionIndexViewTests(TestCase):
     def test_no_questions(self):
