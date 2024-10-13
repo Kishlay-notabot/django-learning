@@ -3,9 +3,13 @@ from django.urls import reverse
 from django.test import TestCase
 from django.utils import timezone
 
-from .models import Ques
+from .models import Ques, Choice
 
+def create_question_with_choice(question_t, question_c):
+    time = timezone.now()
+    Ques.objects.create(question_text=question_t, pub_date=time,choice_text=question_c)
 
+  
 class QuestionModelTests(TestCase):
     def test_was_published_recently_with_future_question(self):
         """
@@ -79,3 +83,10 @@ class QuestionDetailViewTests(TestCase):
         url = reverse("polls:detail", args=(past_question.id,))
         response = self.client.get(url)
         self.assertContains(response, past_question.question_text)
+
+
+class TestForEmptyQues(TestCase):
+    new_question = create_question_with_choice(question_t="TestQ", question_c="TestChoice")
+    response = self.client.get(reverse("polls:index"))
+    self.assertContains(response, "No polls are available.")
+    self.assertQuerySetEqual(response.context["latest_question_list"], [])
