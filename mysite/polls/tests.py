@@ -4,7 +4,9 @@ from django.test import TestCase
 from django.utils import timezone
 
 from .models import Ques
-
+def create_question_without_choice(question_t):
+    time = timezone.now()
+    Ques.objects.create(question_text=question_t, pub_date=time)
 
 class QuestionModelTests(TestCase):
     def test_was_published_recently_with_future_question(self):
@@ -79,3 +81,11 @@ class QuestionDetailViewTests(TestCase):
         url = reverse("polls:detail", args=(past_question.id,))
         response = self.client.get(url)
         self.assertContains(response, past_question.question_text)
+
+
+class TestForQuestionsInIndexOrNot(TestCase):
+    def test_without_options(self):
+        new_q = create_question_without_choice(question_t="TestQ")
+        response = self.client.get(reverse("polls:index"))
+        self.assertContains(response, "No polls are available.")
+        self.assertQuerySetEqual(response.context["latest_question_list"], [])
