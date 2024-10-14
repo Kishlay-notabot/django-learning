@@ -4,5 +4,7 @@ from django.contrib import admin
 
 from .models import Ques, Choice
 
-admin.site.register(Ques)
+class QuestionAdmin(admin.ModelAdmin):
+    fields = ["pub_date", "question_text"]
+admin.site.register(Ques, QuestionAdmin)
 admin.site.register(Choice)

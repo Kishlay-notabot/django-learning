@@ -29,4 +29,7 @@ apply migration
 create an admin user  
 
 * `python manage.py test polls`  
-run test file for a django app [here: polls]
+run test file for a django app [here: polls]  
+
+* `python manage.py createsuperuser`  
+create admin account
