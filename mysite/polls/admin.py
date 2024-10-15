@@ -15,4 +15,6 @@ class QuestionAdmin(admin.ModelAdmin):
         ("Date information", {"fields": ["pub_date"], "classes": ["collapse"]}),
     ]
     inlines = [ChoiceInline]
+    list_filter = ["pub_date"]
+    search_fields = ["question_text"]
 admin.site.register(Ques, QuestionAdmin)
