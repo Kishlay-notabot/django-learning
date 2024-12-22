@@ -32,4 +32,7 @@ create an admin user
 run test file for a django app [here: polls]  
 
 * `python manage.py createsuperuser`  
-create admin account
+create admin account  
+
+
+ref: https://docs.djangoproject.com/en/1.8/intro/tutorial02/
