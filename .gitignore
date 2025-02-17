@@ -10,3 +10,6 @@
 /mysite/polls/migrations
 /mysite/db.sqlite3
 /script.bat
+/.dk
+/tut/myst/__pycache__
+/tut/polls/__pycache__
