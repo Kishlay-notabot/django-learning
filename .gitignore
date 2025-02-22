@@ -13,3 +13,4 @@
 /.dk
 /tut/myst/__pycache__
 /tut/polls/__pycache__
+/tut/polls/migrations
